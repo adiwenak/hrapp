@@ -6,6 +6,7 @@ import (
 
 	"github.com/adiwenak/hrapp/api"
 	"github.com/adiwenak/hrapp/ent"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 
 	_ "github.com/lib/pq"
@@ -26,7 +27,8 @@ func main() {
 
 	router := fiber.New()
 	server := api.ServerInterfaceImpl{
-		Client: client,
+		Client:   client,
+		Validate: validator.New(),
 	}
 
 	api.RegisterHandlers(router, &server)

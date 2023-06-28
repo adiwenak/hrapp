@@ -18,15 +18,15 @@ type Error struct {
 
 // NewUser defines model for NewUser.
 type NewUser struct {
-	Dob       *string `json:"dob,omitempty"`
-	FirstName *string `json:"firstName,omitempty"`
+	Dob       *string `json:"dob,omitempty" validate:"required,min=2,max=30"`
+	FirstName *string `json:"firstName,omitempty" validate:"required,min=2,max=50"`
 	LastName  *string `json:"lastName,omitempty"`
 }
 
 // User defines model for User.
 type User struct {
-	Dob       *string `json:"dob,omitempty"`
-	FirstName *string `json:"firstName,omitempty"`
+	Dob       *string `json:"dob,omitempty" validate:"required, min=2, max=30"`
+	FirstName *string `json:"firstName,omitempty" validate:"required, min=2, max=50"`
 	Id        int64   `json:"id"`
 	LastName  *string `json:"lastName,omitempty"`
 }

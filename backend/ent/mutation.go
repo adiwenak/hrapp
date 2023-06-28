@@ -34,6 +34,7 @@ type UserMutation struct {
 	id            *int
 	firstName     *string
 	lastName      *string
+	dob           *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*User, error)
@@ -210,6 +211,42 @@ func (m *UserMutation) ResetLastName() {
 	m.lastName = nil
 }
 
+// SetDob sets the "dob" field.
+func (m *UserMutation) SetDob(s string) {
+	m.dob = &s
+}
+
+// Dob returns the value of the "dob" field in the mutation.
+func (m *UserMutation) Dob() (r string, exists bool) {
+	v := m.dob
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDob returns the old "dob" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDob(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDob is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDob requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDob: %w", err)
+	}
+	return oldValue.Dob, nil
+}
+
+// ResetDob resets all changes to the "dob" field.
+func (m *UserMutation) ResetDob() {
+	m.dob = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -244,12 +281,15 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.firstName != nil {
 		fields = append(fields, user.FieldFirstName)
 	}
 	if m.lastName != nil {
 		fields = append(fields, user.FieldLastName)
+	}
+	if m.dob != nil {
+		fields = append(fields, user.FieldDob)
 	}
 	return fields
 }
@@ -263,6 +303,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.FirstName()
 	case user.FieldLastName:
 		return m.LastName()
+	case user.FieldDob:
+		return m.Dob()
 	}
 	return nil, false
 }
@@ -276,6 +318,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldFirstName(ctx)
 	case user.FieldLastName:
 		return m.OldLastName(ctx)
+	case user.FieldDob:
+		return m.OldDob(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -298,6 +342,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLastName(v)
+		return nil
+	case user.FieldDob:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDob(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -353,6 +404,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldLastName:
 		m.ResetLastName()
+		return nil
+	case user.FieldDob:
+		m.ResetDob()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

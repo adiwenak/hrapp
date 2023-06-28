@@ -125,10 +125,14 @@ components:
       properties:
         firstName:
           type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=2,max=50
         lastName:
           type: string
         dob:
           type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=2,max=30
 
     Error:
       type: object

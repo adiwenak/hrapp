@@ -15,6 +15,8 @@ const (
 	FieldFirstName = "first_name"
 	// FieldLastName holds the string denoting the lastname field in the database.
 	FieldLastName = "last_name"
+	// FieldDob holds the string denoting the dob field in the database.
+	FieldDob = "dob"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 )
@@ -24,6 +26,7 @@ var Columns = []string{
 	FieldID,
 	FieldFirstName,
 	FieldLastName,
+	FieldDob,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -52,4 +55,9 @@ func ByFirstName(opts ...sql.OrderTermOption) OrderOption {
 // ByLastName orders the results by the lastName field.
 func ByLastName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastName, opts...).ToFunc()
+}
+
+// ByDob orders the results by the dob field.
+func ByDob(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDob, opts...).ToFunc()
 }

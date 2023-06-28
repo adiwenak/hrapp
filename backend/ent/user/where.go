@@ -62,6 +62,11 @@ func LastName(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldLastName, v))
 }
 
+// Dob applies equality check predicate on the "dob" field. It's identical to DobEQ.
+func Dob(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDob, v))
+}
+
 // FirstNameEQ applies the EQ predicate on the "firstName" field.
 func FirstNameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldFirstName, v))
@@ -190,6 +195,71 @@ func LastNameEqualFold(v string) predicate.User {
 // LastNameContainsFold applies the ContainsFold predicate on the "lastName" field.
 func LastNameContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldLastName, v))
+}
+
+// DobEQ applies the EQ predicate on the "dob" field.
+func DobEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDob, v))
+}
+
+// DobNEQ applies the NEQ predicate on the "dob" field.
+func DobNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldDob, v))
+}
+
+// DobIn applies the In predicate on the "dob" field.
+func DobIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldDob, vs...))
+}
+
+// DobNotIn applies the NotIn predicate on the "dob" field.
+func DobNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldDob, vs...))
+}
+
+// DobGT applies the GT predicate on the "dob" field.
+func DobGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldDob, v))
+}
+
+// DobGTE applies the GTE predicate on the "dob" field.
+func DobGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldDob, v))
+}
+
+// DobLT applies the LT predicate on the "dob" field.
+func DobLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldDob, v))
+}
+
+// DobLTE applies the LTE predicate on the "dob" field.
+func DobLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldDob, v))
+}
+
+// DobContains applies the Contains predicate on the "dob" field.
+func DobContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldDob, v))
+}
+
+// DobHasPrefix applies the HasPrefix predicate on the "dob" field.
+func DobHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldDob, v))
+}
+
+// DobHasSuffix applies the HasSuffix predicate on the "dob" field.
+func DobHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldDob, v))
+}
+
+// DobEqualFold applies the EqualFold predicate on the "dob" field.
+func DobEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldDob, v))
+}
+
+// DobContainsFold applies the ContainsFold predicate on the "dob" field.
+func DobContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldDob, v))
 }
 
 // And groups predicates with the AND operator between them.

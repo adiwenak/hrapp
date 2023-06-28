@@ -15,6 +15,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("firstName"),
 		field.String("lastName"),
+		field.String("dob"),
 	}
 }
 

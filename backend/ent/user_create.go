@@ -31,6 +31,12 @@ func (uc *UserCreate) SetLastName(s string) *UserCreate {
 	return uc
 }
 
+// SetDob sets the "dob" field.
+func (uc *UserCreate) SetDob(s string) *UserCreate {
+	uc.mutation.SetDob(s)
+	return uc
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -71,6 +77,9 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.LastName(); !ok {
 		return &ValidationError{Name: "lastName", err: errors.New(`ent: missing required field "User.lastName"`)}
 	}
+	if _, ok := uc.mutation.Dob(); !ok {
+		return &ValidationError{Name: "dob", err: errors.New(`ent: missing required field "User.dob"`)}
+	}
 	return nil
 }
 
@@ -104,6 +113,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
 		_node.LastName = value
+	}
+	if value, ok := uc.mutation.Dob(); ok {
+		_spec.SetField(user.FieldDob, field.TypeString, value)
+		_node.Dob = value
 	}
 	return _node, _spec
 }

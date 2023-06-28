@@ -7,11 +7,13 @@ import (
 	"net/http"
 
 	"github.com/adiwenak/hrapp/ent"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 type ServerInterfaceImpl struct {
-	Client *ent.Client
+	Client   *ent.Client
+	Validate *validator.Validate
 }
 
 func (serv *ServerInterfaceImpl) CreateUser(c *fiber.Ctx) error {
@@ -20,7 +22,31 @@ func (serv *ServerInterfaceImpl) CreateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
-	_, err := serv.Client.User.Create().SetFirstName(*newUser.FirstName).SetLastName(*newUser.LastName).Save(c.Context())
+	if err := serv.Validate.Struct(newUser); err != nil {
+		var validationErrors = err.(validator.ValidationErrors)
+		for _, err := range validationErrors {
+
+			fmt.Println(err.Namespace())
+			fmt.Println(err.Field())
+			fmt.Println(err.StructNamespace())
+			fmt.Println(err.StructField())
+			fmt.Println(err.Tag())
+			fmt.Println(err.ActualTag())
+			fmt.Println(err.Kind())
+			fmt.Println(err.Type())
+			fmt.Println(err.Value())
+			fmt.Println(err.Param())
+			fmt.Println()
+		}
+
+		return c.Status(http.StatusBadRequest).JSON(validationErrors)
+	}
+
+	_, err := serv.Client.User.Create().
+		SetFirstName(*newUser.FirstName).
+		SetLastName(*newUser.LastName).
+		SetDob(*newUser.Dob).
+		Save(c.Context())
 
 	if err != nil {
 		fmt.Errorf("failed creating user: %w", err)
