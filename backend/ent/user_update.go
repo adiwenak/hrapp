@@ -6,10 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/adiwenak/hrapp/ent/organisation"
 	"github.com/adiwenak/hrapp/ent/predicate"
 	"github.com/adiwenak/hrapp/ent/user"
 )
@@ -27,6 +29,12 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
 // SetFirstName sets the "firstName" field.
 func (uu *UserUpdate) SetFirstName(s string) *UserUpdate {
 	uu.mutation.SetFirstName(s)
@@ -39,10 +47,23 @@ func (uu *UserUpdate) SetLastName(s string) *UserUpdate {
 	return uu
 }
 
-// SetDob sets the "dob" field.
-func (uu *UserUpdate) SetDob(s string) *UserUpdate {
-	uu.mutation.SetDob(s)
+// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
+func (uu *UserUpdate) SetOrganisationID(id int) *UserUpdate {
+	uu.mutation.SetOrganisationID(id)
 	return uu
+}
+
+// SetNillableOrganisationID sets the "organisation" edge to the Organisation entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableOrganisationID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetOrganisationID(*id)
+	}
+	return uu
+}
+
+// SetOrganisation sets the "organisation" edge to the Organisation entity.
+func (uu *UserUpdate) SetOrganisation(o *Organisation) *UserUpdate {
+	return uu.SetOrganisationID(o.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -50,8 +71,15 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
+// ClearOrganisation clears the "organisation" edge to the Organisation entity.
+func (uu *UserUpdate) ClearOrganisation() *UserUpdate {
+	uu.mutation.ClearOrganisation()
+	return uu
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	uu.defaults()
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -77,6 +105,14 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uu *UserUpdate) defaults() {
+	if _, ok := uu.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := uu.mutation.predicates; len(ps) > 0 {
@@ -86,14 +122,43 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
 	if value, ok := uu.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.Dob(); ok {
-		_spec.SetField(user.FieldDob, field.TypeString, value)
+	if uu.mutation.OrganisationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganisationTable,
+			Columns: []string{user.OrganisationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organisation.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OrganisationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganisationTable,
+			Columns: []string{user.OrganisationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organisation.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -115,6 +180,12 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
 // SetFirstName sets the "firstName" field.
 func (uuo *UserUpdateOne) SetFirstName(s string) *UserUpdateOne {
 	uuo.mutation.SetFirstName(s)
@@ -127,15 +198,34 @@ func (uuo *UserUpdateOne) SetLastName(s string) *UserUpdateOne {
 	return uuo
 }
 
-// SetDob sets the "dob" field.
-func (uuo *UserUpdateOne) SetDob(s string) *UserUpdateOne {
-	uuo.mutation.SetDob(s)
+// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
+func (uuo *UserUpdateOne) SetOrganisationID(id int) *UserUpdateOne {
+	uuo.mutation.SetOrganisationID(id)
 	return uuo
+}
+
+// SetNillableOrganisationID sets the "organisation" edge to the Organisation entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableOrganisationID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetOrganisationID(*id)
+	}
+	return uuo
+}
+
+// SetOrganisation sets the "organisation" edge to the Organisation entity.
+func (uuo *UserUpdateOne) SetOrganisation(o *Organisation) *UserUpdateOne {
+	return uuo.SetOrganisationID(o.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearOrganisation clears the "organisation" edge to the Organisation entity.
+func (uuo *UserUpdateOne) ClearOrganisation() *UserUpdateOne {
+	uuo.mutation.ClearOrganisation()
+	return uuo
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -153,6 +243,7 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	uuo.defaults()
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -175,6 +266,14 @@ func (uuo *UserUpdateOne) Exec(ctx context.Context) error {
 func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uuo *UserUpdateOne) defaults() {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -204,14 +303,43 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
 	if value, ok := uuo.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.Dob(); ok {
-		_spec.SetField(user.FieldDob, field.TypeString, value)
+	if uuo.mutation.OrganisationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganisationTable,
+			Columns: []string{user.OrganisationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organisation.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OrganisationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   user.OrganisationTable,
+			Columns: []string{user.OrganisationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organisation.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

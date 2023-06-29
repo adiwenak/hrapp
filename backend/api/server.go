@@ -45,7 +45,6 @@ func (serv *ServerInterfaceImpl) CreateUser(c *fiber.Ctx) error {
 	_, err := serv.Client.User.Create().
 		SetFirstName(*newUser.FirstName).
 		SetLastName(*newUser.LastName).
-		SetDob(*newUser.Dob).
 		Save(c.Context())
 
 	if err != nil {

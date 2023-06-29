@@ -6,5 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Organisation is the predicate function for organisation builders.
+type Organisation func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

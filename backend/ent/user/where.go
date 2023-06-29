@@ -3,7 +3,10 @@
 package user
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/adiwenak/hrapp/ent/predicate"
 )
 
@@ -52,6 +55,16 @@ func IDLTE(id int) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldID, id))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
 // FirstName applies equality check predicate on the "firstName" field. It's identical to FirstNameEQ.
 func FirstName(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldFirstName, v))
@@ -62,9 +75,84 @@ func LastName(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldLastName, v))
 }
 
-// Dob applies equality check predicate on the "dob" field. It's identical to DobEQ.
-func Dob(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldDob, v))
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
 // FirstNameEQ applies the EQ predicate on the "firstName" field.
@@ -197,69 +285,27 @@ func LastNameContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldLastName, v))
 }
 
-// DobEQ applies the EQ predicate on the "dob" field.
-func DobEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldDob, v))
+// HasOrganisation applies the HasEdge predicate on the "organisation" edge.
+func HasOrganisation() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganisationTable, OrganisationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
 }
 
-// DobNEQ applies the NEQ predicate on the "dob" field.
-func DobNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldDob, v))
-}
-
-// DobIn applies the In predicate on the "dob" field.
-func DobIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldDob, vs...))
-}
-
-// DobNotIn applies the NotIn predicate on the "dob" field.
-func DobNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldDob, vs...))
-}
-
-// DobGT applies the GT predicate on the "dob" field.
-func DobGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldDob, v))
-}
-
-// DobGTE applies the GTE predicate on the "dob" field.
-func DobGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldDob, v))
-}
-
-// DobLT applies the LT predicate on the "dob" field.
-func DobLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldDob, v))
-}
-
-// DobLTE applies the LTE predicate on the "dob" field.
-func DobLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldDob, v))
-}
-
-// DobContains applies the Contains predicate on the "dob" field.
-func DobContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldDob, v))
-}
-
-// DobHasPrefix applies the HasPrefix predicate on the "dob" field.
-func DobHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldDob, v))
-}
-
-// DobHasSuffix applies the HasSuffix predicate on the "dob" field.
-func DobHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldDob, v))
-}
-
-// DobEqualFold applies the EqualFold predicate on the "dob" field.
-func DobEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldDob, v))
-}
-
-// DobContainsFold applies the ContainsFold predicate on the "dob" field.
-func DobContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldDob, v))
+// HasOrganisationWith applies the HasEdge predicate on the "organisation" edge with a given conditions (other predicates).
+func HasOrganisationWith(preds ...predicate.Organisation) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newOrganisationStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

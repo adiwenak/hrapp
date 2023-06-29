@@ -9,6 +9,18 @@ import (
 	"github.com/adiwenak/hrapp/ent"
 )
 
+// The OrganisationFunc type is an adapter to allow the use of ordinary
+// function as Organisation mutator.
+type OrganisationFunc func(context.Context, *ent.OrganisationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrganisationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.OrganisationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrganisationMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

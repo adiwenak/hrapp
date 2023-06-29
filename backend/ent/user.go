@@ -5,9 +5,11 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/adiwenak/hrapp/ent/organisation"
 	"github.com/adiwenak/hrapp/ent/user"
 )
 
@@ -16,13 +18,41 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// FirstName holds the value of the "firstName" field.
 	FirstName string `json:"firstName,omitempty"`
 	// LastName holds the value of the "lastName" field.
 	LastName string `json:"lastName,omitempty"`
-	// Dob holds the value of the "dob" field.
-	Dob          string `json:"dob,omitempty"`
-	selectValues sql.SelectValues
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges              UserEdges `json:"edges"`
+	organisation_users *int
+	selectValues       sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Organisation holds the value of the organisation edge.
+	Organisation *Organisation `json:"organisation,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// OrganisationOrErr returns the Organisation value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) OrganisationOrErr() (*Organisation, error) {
+	if e.loadedTypes[0] {
+		if e.Organisation == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organisation.Label}
+		}
+		return e.Organisation, nil
+	}
+	return nil, &NotLoadedError{edge: "organisation"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -32,8 +62,12 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldFirstName, user.FieldLastName, user.FieldDob:
+		case user.FieldFirstName, user.FieldLastName:
 			values[i] = new(sql.NullString)
+		case user.FieldCreatedAt, user.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
+		case user.ForeignKeys[0]: // organisation_users
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -55,6 +89,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = int(value.Int64)
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				u.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
+			}
 		case user.FieldFirstName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field firstName", values[i])
@@ -67,11 +113,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.LastName = value.String
 			}
-		case user.FieldDob:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field dob", values[i])
+		case user.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field organisation_users", value)
 			} else if value.Valid {
-				u.Dob = value.String
+				u.organisation_users = new(int)
+				*u.organisation_users = int(value.Int64)
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -84,6 +131,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryOrganisation queries the "organisation" edge of the User entity.
+func (u *User) QueryOrganisation() *OrganisationQuery {
+	return NewUserClient(u.config).QueryOrganisation(u)
 }
 
 // Update returns a builder for updating this User.
@@ -109,14 +161,17 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("firstName=")
 	builder.WriteString(u.FirstName)
 	builder.WriteString(", ")
 	builder.WriteString("lastName=")
 	builder.WriteString(u.LastName)
-	builder.WriteString(", ")
-	builder.WriteString("dob=")
-	builder.WriteString(u.Dob)
 	builder.WriteByte(')')
 	return builder.String()
 }

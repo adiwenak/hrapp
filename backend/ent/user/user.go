@@ -3,7 +3,10 @@
 package user
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,22 +14,40 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// FieldFirstName holds the string denoting the firstname field in the database.
 	FieldFirstName = "first_name"
 	// FieldLastName holds the string denoting the lastname field in the database.
 	FieldLastName = "last_name"
-	// FieldDob holds the string denoting the dob field in the database.
-	FieldDob = "dob"
+	// EdgeOrganisation holds the string denoting the organisation edge name in mutations.
+	EdgeOrganisation = "organisation"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// OrganisationTable is the table that holds the organisation relation/edge.
+	OrganisationTable = "users"
+	// OrganisationInverseTable is the table name for the Organisation entity.
+	// It exists in this package in order to avoid circular dependency with the "organisation" package.
+	OrganisationInverseTable = "organisations"
+	// OrganisationColumn is the table column denoting the organisation relation/edge.
+	OrganisationColumn = "organisation_users"
 )
 
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 	FieldFirstName,
 	FieldLastName,
-	FieldDob,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"organisation_users",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -36,8 +57,22 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
+			return true
+		}
+	}
 	return false
 }
+
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+)
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -45,6 +80,16 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
 // ByFirstName orders the results by the firstName field.
@@ -57,7 +102,16 @@ func ByLastName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastName, opts...).ToFunc()
 }
 
-// ByDob orders the results by the dob field.
-func ByDob(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDob, opts...).ToFunc()
+// ByOrganisationField orders the results by organisation field.
+func ByOrganisationField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrganisationStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newOrganisationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrganisationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OrganisationTable, OrganisationColumn),
+	)
 }

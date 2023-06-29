@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/adiwenak/hrapp/ent/organisation"
 	"github.com/adiwenak/hrapp/ent/user"
 )
 
@@ -21,6 +23,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Organisation is the client for interacting with the Organisation builders.
+	Organisation *OrganisationClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -36,6 +40,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Organisation = NewOrganisationClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -117,9 +122,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		User:   NewUserClient(cfg),
+		ctx:          ctx,
+		config:       cfg,
+		Organisation: NewOrganisationClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
@@ -137,16 +143,17 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		User:   NewUserClient(cfg),
+		ctx:          ctx,
+		config:       cfg,
+		Organisation: NewOrganisationClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		User.
+//		Organisation.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -168,22 +175,160 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Organisation.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Organisation.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *OrganisationMutation:
+		return c.Organisation.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// OrganisationClient is a client for the Organisation schema.
+type OrganisationClient struct {
+	config
+}
+
+// NewOrganisationClient returns a client for the Organisation from the given config.
+func NewOrganisationClient(c config) *OrganisationClient {
+	return &OrganisationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organisation.Hooks(f(g(h())))`.
+func (c *OrganisationClient) Use(hooks ...Hook) {
+	c.hooks.Organisation = append(c.hooks.Organisation, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `organisation.Intercept(f(g(h())))`.
+func (c *OrganisationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Organisation = append(c.inters.Organisation, interceptors...)
+}
+
+// Create returns a builder for creating a Organisation entity.
+func (c *OrganisationClient) Create() *OrganisationCreate {
+	mutation := newOrganisationMutation(c.config, OpCreate)
+	return &OrganisationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Organisation entities.
+func (c *OrganisationClient) CreateBulk(builders ...*OrganisationCreate) *OrganisationCreateBulk {
+	return &OrganisationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Organisation.
+func (c *OrganisationClient) Update() *OrganisationUpdate {
+	mutation := newOrganisationMutation(c.config, OpUpdate)
+	return &OrganisationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganisationClient) UpdateOne(o *Organisation) *OrganisationUpdateOne {
+	mutation := newOrganisationMutation(c.config, OpUpdateOne, withOrganisation(o))
+	return &OrganisationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganisationClient) UpdateOneID(id int) *OrganisationUpdateOne {
+	mutation := newOrganisationMutation(c.config, OpUpdateOne, withOrganisationID(id))
+	return &OrganisationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Organisation.
+func (c *OrganisationClient) Delete() *OrganisationDelete {
+	mutation := newOrganisationMutation(c.config, OpDelete)
+	return &OrganisationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganisationClient) DeleteOne(o *Organisation) *OrganisationDeleteOne {
+	return c.DeleteOneID(o.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OrganisationClient) DeleteOneID(id int) *OrganisationDeleteOne {
+	builder := c.Delete().Where(organisation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganisationDeleteOne{builder}
+}
+
+// Query returns a query builder for Organisation.
+func (c *OrganisationClient) Query() *OrganisationQuery {
+	return &OrganisationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrganisation},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Organisation entity by its id.
+func (c *OrganisationClient) Get(ctx context.Context, id int) (*Organisation, error) {
+	return c.Query().Where(organisation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganisationClient) GetX(ctx context.Context, id int) *Organisation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUsers queries the users edge of a Organisation.
+func (c *OrganisationClient) QueryUsers(o *Organisation) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organisation.Table, organisation.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organisation.UsersTable, organisation.UsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OrganisationClient) Hooks() []Hook {
+	return c.hooks.Organisation
+}
+
+// Interceptors returns the client interceptors.
+func (c *OrganisationClient) Interceptors() []Interceptor {
+	return c.inters.Organisation
+}
+
+func (c *OrganisationClient) mutate(ctx context.Context, m *OrganisationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrganisationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrganisationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrganisationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrganisationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Organisation mutation op: %q", m.Op())
 	}
 }
 
@@ -280,6 +425,22 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 	return obj
 }
 
+// QueryOrganisation queries the organisation edge of a User.
+func (c *UserClient) QueryOrganisation(u *User) *OrganisationQuery {
+	query := (&OrganisationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(organisation.Table, organisation.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, user.OrganisationTable, user.OrganisationColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -308,9 +469,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		User []ent.Hook
+		Organisation, User []ent.Hook
 	}
 	inters struct {
-		User []ent.Interceptor
+		Organisation, User []ent.Interceptor
 	}
 )
