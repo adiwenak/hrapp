@@ -1,23 +1,16 @@
-package api
+package rest_handlers
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/adiwenak/hrapp/ent"
+	"github.com/adiwenak/hrapp/api"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
-type ServerInterfaceImpl struct {
-	Client   *ent.Client
-	Validate *validator.Validate
-}
-
 func (serv *ServerInterfaceImpl) CreateUser(c *fiber.Ctx) error {
-	newUser := new(NewUser)
+	newUser := new(api.NewUser)
 	if err := c.BodyParser(newUser); err != nil {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
@@ -43,8 +36,8 @@ func (serv *ServerInterfaceImpl) CreateUser(c *fiber.Ctx) error {
 	}
 
 	_, err := serv.Client.User.Create().
-		SetFirstName(*newUser.FirstName).
-		SetLastName(*newUser.LastName).
+		SetFirstName(newUser.FirstName).
+		SetLastName(newUser.LastName).
 		Save(c.Context())
 
 	if err != nil {
@@ -55,27 +48,22 @@ func (serv *ServerInterfaceImpl) CreateUser(c *fiber.Ctx) error {
 	return c.JSON(newUser)
 }
 
-func (serv *ServerInterfaceImpl) GetUserProfile(c *fiber.Ctx, userid int64) error {
+func (serv *ServerInterfaceImpl) GetUserProfile(c *fiber.Ctx, userid string) error {
 	return c.SendString("User Profile")
 }
 
-func (serv *ServerInterfaceImpl) UserCheckIn(c *fiber.Ctx, userid int64) error {
+func (serv *ServerInterfaceImpl) UserCheckIn(c *fiber.Ctx, userid string) error {
 	return c.SendString("User Checkin")
 }
 
-func (serv *ServerInterfaceImpl) UserCheckOut(c *fiber.Ctx, userid int64) error {
+func (serv *ServerInterfaceImpl) UserCheckOut(c *fiber.Ctx, userid string) error {
 	return c.SendString("User Checkout")
 }
 
-func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
-	u, err := client.User.
-		Create().
-		SetFirstName("Ben").
-		SetLastName("Tony").
-		Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed creating user: %w", err)
-	}
-	log.Println("user was created: ", u)
-	return u, nil
+func (serv *ServerInterfaceImpl) GenerateVerificationCode(c *fiber.Ctx, userid string) error {
+	return c.SendString("Generate Verification Code")
+}
+
+func (serv *ServerInterfaceImpl) ChangeUserPassword(c *fiber.Ctx, userid string) error {
+	return c.SendString("Change User Password")
 }

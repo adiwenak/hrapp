@@ -6,6 +6,7 @@ import (
 
 	"github.com/adiwenak/hrapp/api"
 	"github.com/adiwenak/hrapp/ent"
+	"github.com/adiwenak/hrapp/internal/rest_handlers"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 
@@ -28,7 +29,7 @@ func main() {
 	boostrap(client)
 
 	router := fiber.New()
-	server := api.ServerInterfaceImpl{
+	server := rest_handlers.ServerInterfaceImpl{
 		Client:   client,
 		Validate: validator.New(),
 	}
