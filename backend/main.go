@@ -15,7 +15,7 @@ import (
 
 func main() {
 
-	client, err := ent.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres password=password sslmode=disable")
+	client, err := ent.Open("postgres", "host=db port=5432 user=postgres dbname=postgres password=postgres sslmode=disable")
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres", err)
 	}
