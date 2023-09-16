@@ -1,0 +1,13 @@
+type: object
+required:
+  - email
+  - password
+properties:
+  email:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: email
+  password:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: required,min=4,max=20

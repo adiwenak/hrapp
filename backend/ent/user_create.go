@@ -21,31 +21,49 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
-	uc.mutation.SetCreatedAt(t)
+// SetCreateTime sets the "create_time" field.
+func (uc *UserCreate) SetCreateTime(t time.Time) *UserCreate {
+	uc.mutation.SetCreateTime(t)
 	return uc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreateTime(t *time.Time) *UserCreate {
 	if t != nil {
-		uc.SetCreatedAt(*t)
+		uc.SetCreateTime(*t)
 	}
 	return uc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
-	uc.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (uc *UserCreate) SetUpdateTime(t time.Time) *UserCreate {
+	uc.mutation.SetUpdateTime(t)
 	return uc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdateTime(t *time.Time) *UserCreate {
 	if t != nil {
-		uc.SetUpdatedAt(*t)
+		uc.SetUpdateTime(*t)
 	}
+	return uc
+}
+
+// SetEmail sets the "email" field.
+func (uc *UserCreate) SetEmail(s string) *UserCreate {
+	uc.mutation.SetEmail(s)
+	return uc
+}
+
+// SetUsername sets the "username" field.
+func (uc *UserCreate) SetUsername(s string) *UserCreate {
+	uc.mutation.SetUsername(s)
+	return uc
+}
+
+// SetMobileNumber sets the "mobileNumber" field.
+func (uc *UserCreate) SetMobileNumber(s string) *UserCreate {
+	uc.mutation.SetMobileNumber(s)
 	return uc
 }
 
@@ -61,17 +79,35 @@ func (uc *UserCreate) SetLastName(s string) *UserCreate {
 	return uc
 }
 
-// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
-func (uc *UserCreate) SetOrganisationID(id int) *UserCreate {
-	uc.mutation.SetOrganisationID(id)
+// SetPassword sets the "password" field.
+func (uc *UserCreate) SetPassword(s string) *UserCreate {
+	uc.mutation.SetPassword(s)
 	return uc
 }
 
-// SetNillableOrganisationID sets the "organisation" edge to the Organisation entity by ID if the given value is not nil.
-func (uc *UserCreate) SetNillableOrganisationID(id *int) *UserCreate {
-	if id != nil {
-		uc = uc.SetOrganisationID(*id)
+// SetNeedPasswordReset sets the "needPasswordReset" field.
+func (uc *UserCreate) SetNeedPasswordReset(b bool) *UserCreate {
+	uc.mutation.SetNeedPasswordReset(b)
+	return uc
+}
+
+// SetVerificationCode sets the "verificationCode" field.
+func (uc *UserCreate) SetVerificationCode(s string) *UserCreate {
+	uc.mutation.SetVerificationCode(s)
+	return uc
+}
+
+// SetNillableVerificationCode sets the "verificationCode" field if the given value is not nil.
+func (uc *UserCreate) SetNillableVerificationCode(s *string) *UserCreate {
+	if s != nil {
+		uc.SetVerificationCode(*s)
 	}
+	return uc
+}
+
+// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
+func (uc *UserCreate) SetOrganisationID(id int) *UserCreate {
+	uc.mutation.SetOrganisationID(id)
 	return uc
 }
 
@@ -115,29 +151,47 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		v := user.DefaultCreatedAt()
-		uc.mutation.SetCreatedAt(v)
+	if _, ok := uc.mutation.CreateTime(); !ok {
+		v := user.DefaultCreateTime()
+		uc.mutation.SetCreateTime(v)
 	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		v := user.DefaultUpdatedAt()
-		uc.mutation.SetUpdatedAt(v)
+	if _, ok := uc.mutation.UpdateTime(); !ok {
+		v := user.DefaultUpdateTime()
+		uc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
+	if _, ok := uc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "User.create_time"`)}
 	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
+	if _, ok := uc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "User.update_time"`)}
+	}
+	if _, ok := uc.mutation.Email(); !ok {
+		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "User.email"`)}
+	}
+	if _, ok := uc.mutation.Username(); !ok {
+		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
+	}
+	if _, ok := uc.mutation.MobileNumber(); !ok {
+		return &ValidationError{Name: "mobileNumber", err: errors.New(`ent: missing required field "User.mobileNumber"`)}
 	}
 	if _, ok := uc.mutation.FirstName(); !ok {
 		return &ValidationError{Name: "firstName", err: errors.New(`ent: missing required field "User.firstName"`)}
 	}
 	if _, ok := uc.mutation.LastName(); !ok {
 		return &ValidationError{Name: "lastName", err: errors.New(`ent: missing required field "User.lastName"`)}
+	}
+	if _, ok := uc.mutation.Password(); !ok {
+		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
+	}
+	if _, ok := uc.mutation.NeedPasswordReset(); !ok {
+		return &ValidationError{Name: "needPasswordReset", err: errors.New(`ent: missing required field "User.needPasswordReset"`)}
+	}
+	if _, ok := uc.mutation.OrganisationID(); !ok {
+		return &ValidationError{Name: "organisation", err: errors.New(`ent: missing required edge "User.organisation"`)}
 	}
 	return nil
 }
@@ -165,13 +219,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node = &User{config: uc.config}
 		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	)
-	if value, ok := uc.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := uc.mutation.CreateTime(); ok {
+		_spec.SetField(user.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
 	}
-	if value, ok := uc.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
+	if value, ok := uc.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
+	}
+	if value, ok := uc.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+		_node.Email = value
+	}
+	if value, ok := uc.mutation.Username(); ok {
+		_spec.SetField(user.FieldUsername, field.TypeString, value)
+		_node.Username = value
+	}
+	if value, ok := uc.mutation.MobileNumber(); ok {
+		_spec.SetField(user.FieldMobileNumber, field.TypeString, value)
+		_node.MobileNumber = value
 	}
 	if value, ok := uc.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
@@ -180,6 +246,18 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
 		_node.LastName = value
+	}
+	if value, ok := uc.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+		_node.Password = value
+	}
+	if value, ok := uc.mutation.NeedPasswordReset(); ok {
+		_spec.SetField(user.FieldNeedPasswordReset, field.TypeBool, value)
+		_node.NeedPasswordReset = value
+	}
+	if value, ok := uc.mutation.VerificationCode(); ok {
+		_spec.SetField(user.FieldVerificationCode, field.TypeString, value)
+		_node.VerificationCode = value
 	}
 	if nodes := uc.mutation.OrganisationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

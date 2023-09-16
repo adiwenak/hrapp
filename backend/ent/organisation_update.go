@@ -29,9 +29,9 @@ func (ou *OrganisationUpdate) Where(ps ...predicate.Organisation) *OrganisationU
 	return ou
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (ou *OrganisationUpdate) SetUpdatedAt(t time.Time) *OrganisationUpdate {
-	ou.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (ou *OrganisationUpdate) SetUpdateTime(t time.Time) *OrganisationUpdate {
+	ou.mutation.SetUpdateTime(t)
 	return ou
 }
 
@@ -112,9 +112,9 @@ func (ou *OrganisationUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ou *OrganisationUpdate) defaults() {
-	if _, ok := ou.mutation.UpdatedAt(); !ok {
-		v := organisation.UpdateDefaultUpdatedAt()
-		ou.mutation.SetUpdatedAt(v)
+	if _, ok := ou.mutation.UpdateTime(); !ok {
+		v := organisation.UpdateDefaultUpdateTime()
+		ou.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -127,8 +127,8 @@ func (ou *OrganisationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ou.mutation.UpdatedAt(); ok {
-		_spec.SetField(organisation.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := ou.mutation.UpdateTime(); ok {
+		_spec.SetField(organisation.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := ou.mutation.Name(); ok {
 		_spec.SetField(organisation.FieldName, field.TypeString, value)
@@ -198,9 +198,9 @@ type OrganisationUpdateOne struct {
 	mutation *OrganisationMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (ouo *OrganisationUpdateOne) SetUpdatedAt(t time.Time) *OrganisationUpdateOne {
-	ouo.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (ouo *OrganisationUpdateOne) SetUpdateTime(t time.Time) *OrganisationUpdateOne {
+	ouo.mutation.SetUpdateTime(t)
 	return ouo
 }
 
@@ -294,9 +294,9 @@ func (ouo *OrganisationUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ouo *OrganisationUpdateOne) defaults() {
-	if _, ok := ouo.mutation.UpdatedAt(); !ok {
-		v := organisation.UpdateDefaultUpdatedAt()
-		ouo.mutation.SetUpdatedAt(v)
+	if _, ok := ouo.mutation.UpdateTime(); !ok {
+		v := organisation.UpdateDefaultUpdateTime()
+		ouo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -326,8 +326,8 @@ func (ouo *OrganisationUpdateOne) sqlSave(ctx context.Context) (_node *Organisat
 			}
 		}
 	}
-	if value, ok := ouo.mutation.UpdatedAt(); ok {
-		_spec.SetField(organisation.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := ouo.mutation.UpdateTime(); ok {
+		_spec.SetField(organisation.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := ouo.mutation.Name(); ok {
 		_spec.SetField(organisation.FieldName, field.TypeString, value)

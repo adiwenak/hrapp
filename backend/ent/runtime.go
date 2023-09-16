@@ -19,29 +19,29 @@ func init() {
 	_ = organisationMixinFields0
 	organisationFields := schema.Organisation{}.Fields()
 	_ = organisationFields
-	// organisationDescCreatedAt is the schema descriptor for created_at field.
-	organisationDescCreatedAt := organisationMixinFields0[0].Descriptor()
-	// organisation.DefaultCreatedAt holds the default value on creation for the created_at field.
-	organisation.DefaultCreatedAt = organisationDescCreatedAt.Default.(func() time.Time)
-	// organisationDescUpdatedAt is the schema descriptor for updated_at field.
-	organisationDescUpdatedAt := organisationMixinFields0[1].Descriptor()
-	// organisation.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	organisation.DefaultUpdatedAt = organisationDescUpdatedAt.Default.(func() time.Time)
-	// organisation.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	organisation.UpdateDefaultUpdatedAt = organisationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organisationDescCreateTime is the schema descriptor for create_time field.
+	organisationDescCreateTime := organisationMixinFields0[0].Descriptor()
+	// organisation.DefaultCreateTime holds the default value on creation for the create_time field.
+	organisation.DefaultCreateTime = organisationDescCreateTime.Default.(func() time.Time)
+	// organisationDescUpdateTime is the schema descriptor for update_time field.
+	organisationDescUpdateTime := organisationMixinFields0[1].Descriptor()
+	// organisation.DefaultUpdateTime holds the default value on creation for the update_time field.
+	organisation.DefaultUpdateTime = organisationDescUpdateTime.Default.(func() time.Time)
+	// organisation.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	organisation.UpdateDefaultUpdateTime = organisationDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
 	userFields := schema.User{}.Fields()
 	_ = userFields
-	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userMixinFields0[0].Descriptor()
-	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
-	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
-	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userMixinFields0[1].Descriptor()
-	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
-	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescCreateTime is the schema descriptor for create_time field.
+	userDescCreateTime := userMixinFields0[0].Descriptor()
+	// user.DefaultCreateTime holds the default value on creation for the create_time field.
+	user.DefaultCreateTime = userDescCreateTime.Default.(func() time.Time)
+	// userDescUpdateTime is the schema descriptor for update_time field.
+	userDescUpdateTime := userMixinFields0[1].Descriptor()
+	// user.DefaultUpdateTime holds the default value on creation for the update_time field.
+	user.DefaultUpdateTime = userDescUpdateTime.Default.(func() time.Time)
+	// user.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	user.UpdateDefaultUpdateTime = userDescUpdateTime.UpdateDefault.(func() time.Time)
 }

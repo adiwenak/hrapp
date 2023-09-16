@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/mixin"
 )
 
 // Organisation holds the schema definition for the Organisation entity.
@@ -13,7 +14,7 @@ type Organisation struct {
 
 func (Organisation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		TimeMixin{},
+		mixin.Time{},
 	}
 }
 

@@ -4,6 +4,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
+	"entgo.io/ent/schema/mixin"
 )
 
 // User holds the schema definition for the User entity.
@@ -13,19 +15,20 @@ type User struct {
 
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		TimeMixin{},
+		mixin.Time{},
 	}
 }
 
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("userID"),
 		field.String("email"),
+		field.String("username"),
+		field.String("mobileNumber"),
 		field.String("firstName"),
 		field.String("lastName"),
 		field.String("password").Sensitive(),
-		field.Bool("resetPassword"),
+		field.Bool("needPasswordReset"),
 		field.String("verificationCode").Optional(),
 	}
 }
@@ -35,6 +38,13 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("organisation", Organisation.Type).
 			Ref("users").
-			Unique(),
+			Unique().
+			Required(),
+	}
+}
+
+func (User) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("email", "username", "mobileNumber").Unique(),
 	}
 }

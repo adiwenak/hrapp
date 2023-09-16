@@ -1,0 +1,14 @@
+post:
+  tags:
+    - Me
+  summary: User check out
+  operationId: userCheckOut
+  responses:
+    '200':
+      description: OK
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

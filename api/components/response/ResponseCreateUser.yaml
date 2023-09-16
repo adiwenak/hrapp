@@ -1,0 +1,11 @@
+allOf:
+  - type: object
+    required:
+      - id
+      - temporaryPassword
+    properties:
+      id:
+        type: integer
+      temporaryPassword:
+        type: string
+  - $ref: ../schemas/User.yaml

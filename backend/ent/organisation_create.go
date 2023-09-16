@@ -21,30 +21,30 @@ type OrganisationCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (oc *OrganisationCreate) SetCreatedAt(t time.Time) *OrganisationCreate {
-	oc.mutation.SetCreatedAt(t)
+// SetCreateTime sets the "create_time" field.
+func (oc *OrganisationCreate) SetCreateTime(t time.Time) *OrganisationCreate {
+	oc.mutation.SetCreateTime(t)
 	return oc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (oc *OrganisationCreate) SetNillableCreatedAt(t *time.Time) *OrganisationCreate {
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (oc *OrganisationCreate) SetNillableCreateTime(t *time.Time) *OrganisationCreate {
 	if t != nil {
-		oc.SetCreatedAt(*t)
+		oc.SetCreateTime(*t)
 	}
 	return oc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (oc *OrganisationCreate) SetUpdatedAt(t time.Time) *OrganisationCreate {
-	oc.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (oc *OrganisationCreate) SetUpdateTime(t time.Time) *OrganisationCreate {
+	oc.mutation.SetUpdateTime(t)
 	return oc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (oc *OrganisationCreate) SetNillableUpdatedAt(t *time.Time) *OrganisationCreate {
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (oc *OrganisationCreate) SetNillableUpdateTime(t *time.Time) *OrganisationCreate {
 	if t != nil {
-		oc.SetUpdatedAt(*t)
+		oc.SetUpdateTime(*t)
 	}
 	return oc
 }
@@ -105,23 +105,23 @@ func (oc *OrganisationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oc *OrganisationCreate) defaults() {
-	if _, ok := oc.mutation.CreatedAt(); !ok {
-		v := organisation.DefaultCreatedAt()
-		oc.mutation.SetCreatedAt(v)
+	if _, ok := oc.mutation.CreateTime(); !ok {
+		v := organisation.DefaultCreateTime()
+		oc.mutation.SetCreateTime(v)
 	}
-	if _, ok := oc.mutation.UpdatedAt(); !ok {
-		v := organisation.DefaultUpdatedAt()
-		oc.mutation.SetUpdatedAt(v)
+	if _, ok := oc.mutation.UpdateTime(); !ok {
+		v := organisation.DefaultUpdateTime()
+		oc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrganisationCreate) check() error {
-	if _, ok := oc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Organisation.created_at"`)}
+	if _, ok := oc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Organisation.create_time"`)}
 	}
-	if _, ok := oc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Organisation.updated_at"`)}
+	if _, ok := oc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Organisation.update_time"`)}
 	}
 	if _, ok := oc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Organisation.name"`)}
@@ -152,13 +152,13 @@ func (oc *OrganisationCreate) createSpec() (*Organisation, *sqlgraph.CreateSpec)
 		_node = &Organisation{config: oc.config}
 		_spec = sqlgraph.NewCreateSpec(organisation.Table, sqlgraph.NewFieldSpec(organisation.FieldID, field.TypeInt))
 	)
-	if value, ok := oc.mutation.CreatedAt(); ok {
-		_spec.SetField(organisation.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := oc.mutation.CreateTime(); ok {
+		_spec.SetField(organisation.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
 	}
-	if value, ok := oc.mutation.UpdatedAt(); ok {
-		_spec.SetField(organisation.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
+	if value, ok := oc.mutation.UpdateTime(); ok {
+		_spec.SetField(organisation.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if value, ok := oc.mutation.Name(); ok {
 		_spec.SetField(organisation.FieldName, field.TypeString, value)

@@ -1,0 +1,51 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: HR App
+  description: API of HR App
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: https://localhost/v1
+tags: 
+  - name: Me
+    description: APIs related to authenticated user
+  - name: Self Service
+    description: APIs for selfservice capability
+  - name: Users
+    description: APIs for user
+  - name: Organisations
+    description: APIs for organisation
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: hrsession
+
+paths:
+  /login:
+    $ref: paths/login.yaml
+  /logout:
+    $ref: paths/logout.yaml
+
+  /me/selfservice/changepassword:
+    $ref: paths/me_ss_changepassword.yaml
+  /me/selfservice/changepassword/verificationCode:
+    $ref: paths/me_ss_changePassword_verificationCode.yaml
+
+  /me/profile:
+    $ref: paths/me_profile.yaml
+  /me/checkIn:
+    $ref: paths/me_checkin.yaml
+  /me/checkOut:
+    $ref: paths/me_checkout.yaml
+
+  /users:
+    $ref: paths/users.yaml
+
+  /organisations:
+    $ref: paths/organisations.yaml
+  

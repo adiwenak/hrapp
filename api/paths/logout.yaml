@@ -1,0 +1,14 @@
+post:
+  tags:
+    - Authentication
+  summary: Logout
+  operationId: logout
+  responses:
+    '200':
+      description: Success
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

@@ -11,8 +11,8 @@ var (
 	// OrganisationsColumns holds the columns for the "organisations" table.
 	OrganisationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 	}
 	// OrganisationsTable holds the schema information for the "organisations" table.
@@ -24,11 +24,17 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "email", Type: field.TypeString},
+		{Name: "username", Type: field.TypeString},
+		{Name: "mobile_number", Type: field.TypeString},
 		{Name: "first_name", Type: field.TypeString},
 		{Name: "last_name", Type: field.TypeString},
-		{Name: "organisation_users", Type: field.TypeInt, Nullable: true},
+		{Name: "password", Type: field.TypeString},
+		{Name: "need_password_reset", Type: field.TypeBool},
+		{Name: "verification_code", Type: field.TypeString, Nullable: true},
+		{Name: "organisation_users", Type: field.TypeInt},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -38,9 +44,16 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_organisations_users",
-				Columns:    []*schema.Column{UsersColumns[5]},
+				Columns:    []*schema.Column{UsersColumns[11]},
 				RefColumns: []*schema.Column{OrganisationsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_email_username_mobile_number",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[3], UsersColumns[4], UsersColumns[5]},
 			},
 		},
 	}

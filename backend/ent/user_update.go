@@ -29,9 +29,27 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (uu *UserUpdate) SetUpdateTime(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdateTime(t)
+	return uu
+}
+
+// SetEmail sets the "email" field.
+func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
+	uu.mutation.SetEmail(s)
+	return uu
+}
+
+// SetUsername sets the "username" field.
+func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
+	uu.mutation.SetUsername(s)
+	return uu
+}
+
+// SetMobileNumber sets the "mobileNumber" field.
+func (uu *UserUpdate) SetMobileNumber(s string) *UserUpdate {
+	uu.mutation.SetMobileNumber(s)
 	return uu
 }
 
@@ -47,17 +65,41 @@ func (uu *UserUpdate) SetLastName(s string) *UserUpdate {
 	return uu
 }
 
-// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
-func (uu *UserUpdate) SetOrganisationID(id int) *UserUpdate {
-	uu.mutation.SetOrganisationID(id)
+// SetPassword sets the "password" field.
+func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
+	uu.mutation.SetPassword(s)
 	return uu
 }
 
-// SetNillableOrganisationID sets the "organisation" edge to the Organisation entity by ID if the given value is not nil.
-func (uu *UserUpdate) SetNillableOrganisationID(id *int) *UserUpdate {
-	if id != nil {
-		uu = uu.SetOrganisationID(*id)
+// SetNeedPasswordReset sets the "needPasswordReset" field.
+func (uu *UserUpdate) SetNeedPasswordReset(b bool) *UserUpdate {
+	uu.mutation.SetNeedPasswordReset(b)
+	return uu
+}
+
+// SetVerificationCode sets the "verificationCode" field.
+func (uu *UserUpdate) SetVerificationCode(s string) *UserUpdate {
+	uu.mutation.SetVerificationCode(s)
+	return uu
+}
+
+// SetNillableVerificationCode sets the "verificationCode" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableVerificationCode(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetVerificationCode(*s)
 	}
+	return uu
+}
+
+// ClearVerificationCode clears the value of the "verificationCode" field.
+func (uu *UserUpdate) ClearVerificationCode() *UserUpdate {
+	uu.mutation.ClearVerificationCode()
+	return uu
+}
+
+// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
+func (uu *UserUpdate) SetOrganisationID(id int) *UserUpdate {
+	uu.mutation.SetOrganisationID(id)
 	return uu
 }
 
@@ -107,13 +149,24 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uu *UserUpdate) defaults() {
-	if _, ok := uu.mutation.UpdatedAt(); !ok {
-		v := user.UpdateDefaultUpdatedAt()
-		uu.mutation.SetUpdatedAt(v)
+	if _, ok := uu.mutation.UpdateTime(); !ok {
+		v := user.UpdateDefaultUpdateTime()
+		uu.mutation.SetUpdateTime(v)
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (uu *UserUpdate) check() error {
+	if _, ok := uu.mutation.OrganisationID(); uu.mutation.OrganisationCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "User.organisation"`)
+	}
+	return nil
+}
+
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := uu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := uu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -122,14 +175,35 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := uu.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Username(); ok {
+		_spec.SetField(user.FieldUsername, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.MobileNumber(); ok {
+		_spec.SetField(user.FieldMobileNumber, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.NeedPasswordReset(); ok {
+		_spec.SetField(user.FieldNeedPasswordReset, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.VerificationCode(); ok {
+		_spec.SetField(user.FieldVerificationCode, field.TypeString, value)
+	}
+	if uu.mutation.VerificationCodeCleared() {
+		_spec.ClearField(user.FieldVerificationCode, field.TypeString)
 	}
 	if uu.mutation.OrganisationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -180,9 +254,27 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (uuo *UserUpdateOne) SetUpdateTime(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdateTime(t)
+	return uuo
+}
+
+// SetEmail sets the "email" field.
+func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
+	uuo.mutation.SetEmail(s)
+	return uuo
+}
+
+// SetUsername sets the "username" field.
+func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
+	uuo.mutation.SetUsername(s)
+	return uuo
+}
+
+// SetMobileNumber sets the "mobileNumber" field.
+func (uuo *UserUpdateOne) SetMobileNumber(s string) *UserUpdateOne {
+	uuo.mutation.SetMobileNumber(s)
 	return uuo
 }
 
@@ -198,17 +290,41 @@ func (uuo *UserUpdateOne) SetLastName(s string) *UserUpdateOne {
 	return uuo
 }
 
-// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
-func (uuo *UserUpdateOne) SetOrganisationID(id int) *UserUpdateOne {
-	uuo.mutation.SetOrganisationID(id)
+// SetPassword sets the "password" field.
+func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
+	uuo.mutation.SetPassword(s)
 	return uuo
 }
 
-// SetNillableOrganisationID sets the "organisation" edge to the Organisation entity by ID if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableOrganisationID(id *int) *UserUpdateOne {
-	if id != nil {
-		uuo = uuo.SetOrganisationID(*id)
+// SetNeedPasswordReset sets the "needPasswordReset" field.
+func (uuo *UserUpdateOne) SetNeedPasswordReset(b bool) *UserUpdateOne {
+	uuo.mutation.SetNeedPasswordReset(b)
+	return uuo
+}
+
+// SetVerificationCode sets the "verificationCode" field.
+func (uuo *UserUpdateOne) SetVerificationCode(s string) *UserUpdateOne {
+	uuo.mutation.SetVerificationCode(s)
+	return uuo
+}
+
+// SetNillableVerificationCode sets the "verificationCode" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableVerificationCode(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetVerificationCode(*s)
 	}
+	return uuo
+}
+
+// ClearVerificationCode clears the value of the "verificationCode" field.
+func (uuo *UserUpdateOne) ClearVerificationCode() *UserUpdateOne {
+	uuo.mutation.ClearVerificationCode()
+	return uuo
+}
+
+// SetOrganisationID sets the "organisation" edge to the Organisation entity by ID.
+func (uuo *UserUpdateOne) SetOrganisationID(id int) *UserUpdateOne {
+	uuo.mutation.SetOrganisationID(id)
 	return uuo
 }
 
@@ -271,13 +387,24 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uuo *UserUpdateOne) defaults() {
-	if _, ok := uuo.mutation.UpdatedAt(); !ok {
-		v := user.UpdateDefaultUpdatedAt()
-		uuo.mutation.SetUpdatedAt(v)
+	if _, ok := uuo.mutation.UpdateTime(); !ok {
+		v := user.UpdateDefaultUpdateTime()
+		uuo.mutation.SetUpdateTime(v)
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (uuo *UserUpdateOne) check() error {
+	if _, ok := uuo.mutation.OrganisationID(); uuo.mutation.OrganisationCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "User.organisation"`)
+	}
+	return nil
+}
+
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
+	if err := uuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	id, ok := uuo.mutation.ID()
 	if !ok {
@@ -303,14 +430,35 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if value, ok := uuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := uuo.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Username(); ok {
+		_spec.SetField(user.FieldUsername, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.MobileNumber(); ok {
+		_spec.SetField(user.FieldMobileNumber, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.NeedPasswordReset(); ok {
+		_spec.SetField(user.FieldNeedPasswordReset, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.VerificationCode(); ok {
+		_spec.SetField(user.FieldVerificationCode, field.TypeString, value)
+	}
+	if uuo.mutation.VerificationCodeCleared() {
+		_spec.ClearField(user.FieldVerificationCode, field.TypeString)
 	}
 	if uuo.mutation.OrganisationCleared() {
 		edge := &sqlgraph.EdgeSpec{

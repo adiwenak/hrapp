@@ -298,12 +298,12 @@ func (oq *OrganisationQuery) WithUsers(opts ...func(*UserQuery)) *OrganisationQu
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Organisation.Query().
-//		GroupBy(organisation.FieldCreatedAt).
+//		GroupBy(organisation.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (oq *OrganisationQuery) GroupBy(field string, fields ...string) *OrganisationGroupBy {
@@ -321,11 +321,11 @@ func (oq *OrganisationQuery) GroupBy(field string, fields ...string) *Organisati
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.Organisation.Query().
-//		Select(organisation.FieldCreatedAt).
+//		Select(organisation.FieldCreateTime).
 //		Scan(ctx, &v)
 func (oq *OrganisationQuery) Select(fields ...string) *OrganisationSelect {
 	oq.ctx.Fields = append(oq.ctx.Fields, fields...)

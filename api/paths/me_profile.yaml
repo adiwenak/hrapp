@@ -1,0 +1,18 @@
+get:
+  tags:
+    - Me
+  summary: Get current user profile
+  operationId: getCurrentUserProfile
+  responses:
+    '200':
+      description: User profile response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/User.yaml
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

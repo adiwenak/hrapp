@@ -1,0 +1,8 @@
+type: object
+required:
+  - name
+properties:
+  name:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: required,min=2,max=50

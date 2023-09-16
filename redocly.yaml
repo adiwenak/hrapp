@@ -1,0 +1,14 @@
+extends:
+  - recommended
+
+apis:
+  hrapp-api@v1:
+    root: api/openapi.yaml
+
+rules:
+  # Turning off until we know what license we need.
+  info-license: off
+  # Turning off until we have auth setup.
+  security-defined: off
+  # Turning off rule until we have auth setup for a generic 401, as well as then 400 for bad requests.
+  operation-4xx-response: off

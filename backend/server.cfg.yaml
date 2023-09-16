@@ -1,0 +1,6 @@
+package: server
+generate:
+  fiber-server: true
+  strict-server: true
+  embedded-spec: true
+output: server/hrapp_server.gen.go

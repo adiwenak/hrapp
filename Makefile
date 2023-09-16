@@ -1,11 +1,13 @@
-hello:
-	echo "hello"
+bundle-api-spec:
+	scripts/bundle-api-spec.sh
 
 gen-api:
-	oapi-codegen -generate types,fiber -package api ./api/api-spec.yml > ./api/types.generated.go
+	(cd backend; go generate .)
 
-gen-entity:
-	go generate ./ent
+gen-db:
+	(cd backend; go generate ./ent)
+
+gen-all: bundle-api-spec gen-api gen-db
 
 run-db:
 	docker run -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres

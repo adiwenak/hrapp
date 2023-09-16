@@ -1,0 +1,351 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: HR App
+  description: API of HR App
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: https://localhost/v1
+tags:
+  - name: Me
+    description: APIs related to authenticated user
+  - name: Self Service
+    description: APIs for selfservice capability
+  - name: Users
+    description: APIs for user
+  - name: Organisations
+    description: APIs for organisation
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Success
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: hrsession=abcsda; path=/; HttpOnly
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout
+      operationId: logout
+      responses:
+        '200':
+          description: Success
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /me/selfservice/changepassword:
+    put:
+      tags:
+        - Self Service
+      summary: Change user password
+      operationId: changeUserPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestChangePassword'
+      responses:
+        '200':
+          description: OK
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /me/selfservice/changepassword/verificationCode:
+    put:
+      tags:
+        - Self Service
+      summary: Self service verification code
+      operationId: generateVerificationCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestGenerateVerificationCode'
+      responses:
+        '200':
+          description: OK
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /me/profile:
+    get:
+      tags:
+        - Me
+      summary: Get current user profile
+      operationId: getCurrentUserProfile
+      responses:
+        '200':
+          description: User profile response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /me/checkIn:
+    post:
+      tags:
+        - Me
+      summary: User check in
+      operationId: userCheckIn
+      responses:
+        '200':
+          description: OK
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /me/checkOut:
+    post:
+      tags:
+        - Me
+      summary: User check out
+      operationId: userCheckOut
+      responses:
+        '200':
+          description: OK
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Get users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Users
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCreateUser'
+      responses:
+        '200':
+          description: User profile response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCreateUser'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /organisations:
+    post:
+      tags:
+        - Organisations
+      summary: Create organisation
+      operationId: createOrganisation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organisation'
+      responses:
+        '200':
+          description: Create Orgisation Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCreateOrg'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: hrsession
+  schemas:
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: email
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=4,max=20
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    RequestChangePassword:
+      type: object
+      required:
+        - oldpassword
+        - newpassword
+        - verificationCode
+      properties:
+        oldpassword:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required
+        newpassword:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=8, max=30
+        verificationCode:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=6
+    RequestGenerateVerificationCode:
+      type: object
+      required:
+        - channel
+      properties:
+        channel:
+          type: string
+          enum:
+            - mobile
+            - email
+    User:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - username
+        - mobileNumber
+      properties:
+        firstName:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=2,max=50
+        lastName:
+          type: string
+        email:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: email
+        username:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=2,max=50
+        mobileNumber:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=6,max=20
+    Users:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+    RequestCreateUser:
+      allOf:
+        - type: object
+          required:
+            - orgId
+          properties:
+            orgId:
+              type: integer
+        - $ref: '#/components/schemas/User'
+    ResponseCreateUser:
+      allOf:
+        - type: object
+          required:
+            - id
+            - temporaryPassword
+          properties:
+            id:
+              type: integer
+            temporaryPassword:
+              type: string
+        - $ref: '#/components/schemas/User'
+    Organisation:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: required,min=2,max=50
+    ResponseCreateOrg:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+        - $ref: '#/components/schemas/Organisation'

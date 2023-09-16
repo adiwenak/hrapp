@@ -1,0 +1,24 @@
+post:
+  tags:
+    - Organisations
+  summary: Create organisation
+  operationId: createOrganisation
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/Organisation.yaml
+  responses:
+    '200':
+      description: Create Orgisation Response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/response/ResponseCreateOrg.yaml
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

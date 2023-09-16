@@ -1,0 +1,26 @@
+type: object
+required:
+  - firstName
+  - lastName
+  - email
+  - username
+  - mobileNumber
+properties:
+  firstName:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: required,min=2,max=50
+  lastName:
+    type: string
+  email:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: email
+  username:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: required,min=2,max=50
+  mobileNumber:
+    type: string
+    x-oapi-codegen-extra-tags:
+      validate: required,min=6,max=20

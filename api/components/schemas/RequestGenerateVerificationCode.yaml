@@ -1,0 +1,9 @@
+type: object
+required:
+  - channel
+properties:
+  channel:
+    type: string
+    enum:
+      - mobile
+      - email

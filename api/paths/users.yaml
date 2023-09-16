@@ -1,0 +1,42 @@
+get:
+  tags:
+    - Users
+  summary: Get users
+  operationId: getUsers
+  responses: 
+    '200':
+      description: Get users
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Users.yaml
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
+post:
+  tags:
+    - Users
+  summary: Create user
+  operationId: createUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/request/RequestCreateUser.yaml
+  responses:
+    '200':
+      description: User profile response
+      content:
+        application/json:
+          schema:
+            $ref: ../components/response/ResponseCreateUser.yaml
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml

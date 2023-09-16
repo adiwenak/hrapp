@@ -1,0 +1,8 @@
+allOf:
+  - type: object
+    required:
+      - orgId
+    properties:
+      orgId:
+        type: integer
+  - $ref: ../schemas/User.yaml

@@ -1,0 +1,25 @@
+post:
+  tags:
+    - Authentication
+  summary: Login
+  operationId: login
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/Login.yaml
+  responses:
+    '200':
+      description: Success
+      headers:
+        Set-Cookie:
+          schema:
+            type: string
+            example: hrsession=abcsda; path=/; HttpOnly
+    default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Error.yaml
