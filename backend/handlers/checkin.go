@@ -9,7 +9,7 @@ import (
 // User check in
 // (POST /me/checkIn)
 func (h *HRCore) UserCheckIn(ctx context.Context, request server.UserCheckInRequestObject) (server.UserCheckInResponseObject, error) {
-	panic("not implemented") // TODO: Implement
+	panic("not implemented abcd") // TODO: Implement
 }
 
 // User check out
