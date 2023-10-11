@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/adiwenak/hrapp/middlewares"
 	"github.com/adiwenak/hrapp/server"
 	"github.com/adiwenak/hrapp/utils"
 	"github.com/go-playground/validator/v10"
@@ -12,7 +13,19 @@ import (
 // Get current user profile
 // (GET /me/profile)
 func (h *HRCore) GetCurrentUserProfile(ctx context.Context, request server.GetCurrentUserProfileRequestObject) (server.GetCurrentUserProfileResponseObject, error) {
-	panic("not implemented") // TODO: Implement
+	usr, ok := middlewares.GetUserFromUserContext(ctx)
+
+	if !ok {
+		return nil, fmt.Errorf("unable to get user")
+	}
+
+	return server.GetCurrentUserProfile200JSONResponse{
+		FirstName:    usr.FirstName,
+		LastName:     usr.LastName,
+		Email:        usr.Email,
+		MobileNumber: usr.MobileNumber,
+	}, nil
+
 }
 
 // Get users

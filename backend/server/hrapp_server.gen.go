@@ -73,11 +73,15 @@ func (siw *ServerInterfaceWrapper) Logout(c *fiber.Ctx) error {
 // UserCheckIn operation middleware
 func (siw *ServerInterfaceWrapper) UserCheckIn(c *fiber.Ctx) error {
 
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
 	return siw.Handler.UserCheckIn(c)
 }
 
 // UserCheckOut operation middleware
 func (siw *ServerInterfaceWrapper) UserCheckOut(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	return siw.Handler.UserCheckOut(c)
 }
@@ -85,11 +89,15 @@ func (siw *ServerInterfaceWrapper) UserCheckOut(c *fiber.Ctx) error {
 // GetCurrentUserProfile operation middleware
 func (siw *ServerInterfaceWrapper) GetCurrentUserProfile(c *fiber.Ctx) error {
 
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
 	return siw.Handler.GetCurrentUserProfile(c)
 }
 
 // ChangeUserPassword operation middleware
 func (siw *ServerInterfaceWrapper) ChangeUserPassword(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	return siw.Handler.ChangeUserPassword(c)
 }
@@ -97,11 +105,15 @@ func (siw *ServerInterfaceWrapper) ChangeUserPassword(c *fiber.Ctx) error {
 // GenerateVerificationCode operation middleware
 func (siw *ServerInterfaceWrapper) GenerateVerificationCode(c *fiber.Ctx) error {
 
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
 	return siw.Handler.GenerateVerificationCode(c)
 }
 
 // CreateOrganisation operation middleware
 func (siw *ServerInterfaceWrapper) CreateOrganisation(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	return siw.Handler.CreateOrganisation(c)
 }
@@ -109,11 +121,15 @@ func (siw *ServerInterfaceWrapper) CreateOrganisation(c *fiber.Ctx) error {
 // GetUsers operation middleware
 func (siw *ServerInterfaceWrapper) GetUsers(c *fiber.Ctx) error {
 
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
 	return siw.Handler.GetUsers(c)
 }
 
 // CreateUser operation middleware
 func (siw *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	return siw.Handler.CreateUser(c)
 }
@@ -776,27 +792,27 @@ func (sh *strictHandler) CreateUser(ctx *fiber.Ctx) error {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"H4sIAAAAAAAC/9xYW2/bNhT+KwK3R9nynG4YVOQhM4I0aBsHMbYXwxgY6UhiI5EsSSUxAv/3gRdbF9NO",
+	"1tqbt6c4Enn4ne87Fx69oIRVnFGgSqL4BcmkgAqbn5dCMKF/cME4CEXAPE5YCvpvxkSFFYoRoepsjEKk",
+	"lhzsv5CDQKsQVSAlzs1q91IqQWiOVqsQCfhaEwEpiufWZrN+sTHG7r9AorStTywndBsNVJiU2weE6HnA",
+	"MCcDbTkHOoBnJfBA4dzsesQlSbHSG6wBDYhjKZ+YSL/H2tqpsCL0/F1Y4efz8Qit+v7aQ1tH+jyeihxT",
+	"IrEizOM4xRUcDOnYIP3Zg9Qc40N3B19rkGpSYJrDbYu6Hkx4Ojivv4aBhns2MrKxMj3kCcbmIwiSkcRQ",
+	"P3HxfhDov2wz3MYfdvjy4NinhACs4HcJJmdxWU4zFM/7ejCRX7d52mRrH5VZ5znuBf0oIEMx+iFqKkfk",
+	"ykZkjl8tGlRXQEFgBX94GO3VlQJTCiaXgdaVBlGxe1LqwmDzpUGzq4w4E36WJGdUgqVpKvJ9LJG3UES+",
+	"gZ9OTjue2rhek88PLEQKKs4EFsvbnangge/b9x2Sr8EfrUJnREh1c6TCF6IS77Kue5mJxZu6urdOHqYc",
+	"NB0iRLUE8Q9V9YbIltfhpi1tkPTc9uWVFt2GpoLK/Hg9WDZmsBB4aZyXkNSCqOVML1xfNNgDgYtaFcY8",
+	"RbF7pMuk4QnhJAEp/1TsAWhzA8GcfISl9ZrQjOntKchEEG57Kbq4vQ5YFny4Cy441xyQBKiEpq+iC46T",
+	"AoLxcKT5ECWKUaEUl3EUPT09DbF5PWQij9xeGX26nlzezC4H4+FoWKiqNH4SVWpzm5MeQUiL4afhaDjS",
+	"axgHijlBMTozj/S1QBWGgqjc3HqYVKZ+c11OCaO6irtLkdUWpPqNpUvLHFVAzXrMeenKbvRF2ouEFeM1",
+	"qaztXugoUYN5YIuWATkejbYZntVGGhSiAnDqQmQGajCxEnZgwDOuuOGpEBKkJugc3ycyxe8DzcV59D74",
+	"oBSf0nKJtpuAhphChutSHcx7e/l1ptuO1RSeOSQK0gDcmiZ6UTxfhEjWVYXFsqWPzdQ50sEMVDlIaKH3",
+	"ao1ZrfaKrN//HdZPmRDry15GKoiSApKH6z2hryvJxC16CzXTjyfAyoYHjT4wPgadAPkMPQqm+yJjw8H0",
+	"jfFxsiR0g6LNAhcs05fA+AXl4OHgCtSkFgKo0uZu3Wo/GQfx1rawbWeNNw5tsD79lOi+AhUklqqgboHd",
+	"QbyEMpMgHkmiQ1FPee0xi9ceLewwaHRoZphj9Cb/8Pmtveq0ssI65RRqaFxLNIMyC2ZWl7eIFflmWa96",
+	"O0e1o2q489T/h5pGLqdM0JYicN+89ujKWsOi3N0FNhNtM1keR7Hu8PpmeQ4ULf3x3aOFfRlMRe5QBncn",
+	"WIcdStYVbB0H047oNhDq9Yy1qwPaIezITU/6fNVNxcI7sU5XO0rWvFoPFqtwbxaZ5n7cntWc86+m0H/2",
+	"GuPSp7ZK9eXtDR/drwjzxUpPIyAeTT7NX1qTfRxFJUtwWTCp4nej0Qjptc685/uBDASUWINULMDNFAPp",
+	"Gpr7kvAZzCc0j4GMiaDVuIMEc3xPSo18s7vTFvbY6Z7p0nX38l7xcdu6tWe1WP0VAAD//zQ/BwoeGgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
