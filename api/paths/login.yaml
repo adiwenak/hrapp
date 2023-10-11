@@ -3,6 +3,7 @@ post:
     - Authentication
   summary: Login
   operationId: login
+  security: []
   requestBody:
     required: true
     content:

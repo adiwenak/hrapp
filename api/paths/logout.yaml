@@ -3,6 +3,7 @@ post:
     - Authentication
   summary: Logout
   operationId: logout
+  security: []
   responses:
     '200':
       description: Success
