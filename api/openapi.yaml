@@ -7,7 +7,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-  - url: https://localhost/v1
+  - url: http://localhost:4000
 tags: 
   - name: Me
     description: APIs related to authenticated user
@@ -23,7 +23,10 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: hrsession
+      name: access_token
+
+security:
+  - cookieAuth: []
 
 paths:
   /login:
